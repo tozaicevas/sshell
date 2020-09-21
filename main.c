@@ -2,15 +2,11 @@
 #include <stdlib.h>
 #include <string.h>
 #include "utils.h"
-
-int hey() {
-  return 5;
-}
+#include "parser.h"
 
 void stdin_loop(void) {
-  char *line;
-  char **args;
-  int status;
+  char *parsed_args[1024]; 
+  char* parsed_args_piped[1024]; 
     
   do {
     print_prompt();
@@ -22,9 +18,6 @@ void stdin_loop(void) {
     // status = lsh_execute(args);
 
     free(input);
-
-    // free(line);
-    // free(args);
   } while (1);
 }
 

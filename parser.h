@@ -1,6 +1,8 @@
 #ifndef PARSER_H
 #define PARSER_H
 
-void process_input(char *input);
+typedef enum INPUT_STATUS { BUILTIN, PROGRAM, PIPE } INPUT_STATUS;
+
+INPUT_STATUS process_input(char *input);
 
 #endif
