@@ -31,30 +31,17 @@ void print_prompt(void) {
 }
 
 char *read_input(void) {
-  const int BUF_SIZE = 1024;
-  int position = 0;
-  char *buffer = (char *) malloc(sizeof(char) * BUF_SIZE);
-  int input;
+  char *line = NULL;
+  size_t bufsize = 0; 
 
-  if (!buffer) {
-    fprintf(stderr, "Allocation error, exiting\n");
-    exit(EXIT_FAILURE);
-  }
-
-  while (1) {
-    input = getchar();
-    if (input == -1) {
-      fprintf(stderr, "EOT\n");
+  if (getline(&line, &bufsize, stdin) == -1) {
+    if (feof(stdin)) {
+      exit(EXIT_SUCCESS);  
+    } else  {
+      perror("readline");
       exit(EXIT_FAILURE);
     }
-    if (input == EOF || input == '\n') {
-        chdir("/home/fern");
-        buffer[position] = '\0';
-        return buffer;
-    } else {
-        buffer[position] = input;
-    }
-
-    position++;
   }
+
+  return line;
 }

@@ -4,9 +4,9 @@
 #include "utils.h"
 
 void stdin_loop(void) {
-    char *line;
-    char **args;
-    int status;
+  char *line;
+  char **args;
+  int status;
     
   do {
     print_prompt();
