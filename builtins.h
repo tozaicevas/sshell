@@ -3,6 +3,6 @@
 
 void cd(char **args);
 void help(char **args);
-void exit(char **args);
+void do_exit(char **args);
 
 #endif

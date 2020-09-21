@@ -1,6 +1,7 @@
 #include "builtins.h"
 #include <stdio.h>
 #include <stdlib.h>
+#include <unistd.h>
 
 char *builtin_str[] = {
   "cd",
@@ -26,7 +27,6 @@ void cd(char **args) {
       perror("sshell");
     }
   }
-  return 1;
 }
 
 void help(char **args) {
@@ -36,10 +36,8 @@ void help(char **args) {
   for(int i = 0; i < get_builtins_count(); i++) {
     printf("  %s\n", builtin_str[i]);
   }
-
-  return 1;
 }
 
-void exit(char **args) {
+void do_exit(char **args) {
     exit(EXIT_SUCCESS);
 }

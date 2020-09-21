@@ -1,9 +1,11 @@
+C_FILES := ${wildcard *.c}
+
 .PHONY: all
 
 all: clean build run
 
-build:
-	g++ -Wall main.c utils.c
+build: ${C_FILES}
+	gcc -Wall ${C_FILES}
 
 clean:
 	rm -f a.out
