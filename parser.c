@@ -1,5 +1,6 @@
 #include "parser.h"
 #include "builtins.h"
+#include "process.h"
 #include <stdlib.h>
 #include <string.h>
 #include <stdio.h>
@@ -29,5 +30,7 @@ INPUT_STATUS process_input(char *input) {
   char **parsed_args = parse_space(input, parsed);
   if (is_builtin(parsed_args[0])) {
       execute_builtin(parsed_args);
+  } else {
+      execute_program(parsed_args);
   }
 }
