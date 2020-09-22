@@ -23,7 +23,7 @@ char **parse_space(char *str, char **parsed) {
     return parsed;
 } 
 
-INPUT_STATUS process_input(char *input) {
+void process_input(char *input) {
     char *parsed[1024];
 //   char *parsed_args_piped[1024]; 
 

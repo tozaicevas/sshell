@@ -3,6 +3,6 @@
 
 typedef enum INPUT_STATUS { BUILTIN, PROGRAM, PIPE } INPUT_STATUS;
 
-INPUT_STATUS process_input(char *input);
+void process_input(char *input);
 
 #endif

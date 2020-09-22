@@ -2,6 +2,7 @@
 #include <stdio.h>
 #include <unistd.h>
 #include <sys/wait.h>
+#include <stdlib.h>
 
 void execute_program(char **args) {
     pid_t pid = fork();  
@@ -16,11 +17,9 @@ void execute_program(char **args) {
         } 
         exit(0); 
     } else { 
-        // waiting for child to terminate 
         do {
             waitpid(pid, &status, WUNTRACED);
         } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-        // wait(NULL);  
         return; 
     } 
 } 
