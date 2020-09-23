@@ -48,7 +48,9 @@ int spawn_pipe_proc(int in, int out, char **cmd) {
         }
 
         return execvp(cmd[0], cmd);
-    } 
+    } else {
+        wait_for_process_to_end(pid);
+    }
 
   return pid;
 }
@@ -71,8 +73,7 @@ void execute_pipes(char *pipes[][1024], int pipes_amount) {
     pid = fork();
 
     if (pid == NEWLY_CREATED_CHILD) {
-        if (in != STDIN_FILENO)
-            dup2(in, STDIN_FILENO);
+        dup2(in, STDIN_FILENO);
         execvp(pipes[i][0], pipes[i]);
     } else if (pid > 0) {
         wait_for_process_to_end(pid);
