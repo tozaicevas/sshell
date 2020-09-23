@@ -67,7 +67,7 @@ void help(char **args) {
   printf("sshell (Simple Shell) v0.1\n");
   printf("Builtins: \n");
 
-  for(int i = 0; i < get_builtins_count(); i++) {
+  for (int i = 0; i < get_builtins_count(); i++) {
     printf("  %s\n", builtin_str[i]);
   }
 }

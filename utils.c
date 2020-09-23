@@ -38,7 +38,7 @@ char *read_input(void) {
     if (feof(stdin)) {
       exit(EXIT_SUCCESS);  
     } else  {
-      perror("readline");
+      perror("sshell");
       exit(EXIT_FAILURE);
     }
   }

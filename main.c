@@ -4,6 +4,8 @@
 #include "utils.h"
 #include "parser.h"
 
+#define clear() printf("\033[H\033[J") 
+
 void stdin_loop(void) {
   do {
     print_prompt();
