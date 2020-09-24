@@ -14,7 +14,7 @@ char *builtin_str[] = {
 void (*builtin_func[]) (char **) = {
   &cd,
   &help,
-  &exit
+  &do_exit
 };
 
 int get_builtins_count() {
