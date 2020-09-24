@@ -38,28 +38,30 @@ void execute_builtin(char **args) {
   }
 }
 
+void interpolate_home(char *str, char *result) {
+  char *after_home = malloc(strlen(str) * sizeof(char));
+  strncpy(after_home, str, strlen(str));
+  strcat(result, "/home/");
+  strcat(result, getenv("USER"));
+  strcat(result, after_home);
+  free(after_home);
+}
+
 void cd(char **args) {
-  // bool includes_home = false;
-  // char arg_with_home_path[1024] = {0};
-  // char *after_home;
-  // if (args[1][0] == '~') {
-  //  includes_home = true; 
-  //  after_home = malloc((strlen(args[1]) - 1) * sizeof(char));
-  //  strncpy(after_home, args[1]+1, strlen(args[1]) - 1);
-  //  strcat(arg_with_home_path, "/home/");
-  //  strcat(arg_with_home_path, getenv("USER"));
-  //  strcat(arg_with_home_path, after_home);
-  // }
+  bool includes_home = false;
+  char arg_with_home_path[1024] = {0};
+  char *after_home;
+  if (args[1][0] == '~') {
+   includes_home = true; 
+   interpolate_home(args[1] + 1, arg_with_home_path);
+  }
+
   if (args[1] == NULL) {
     fprintf(stderr, "sshell: expected argument to \"cd\"\n");
   } else {
-    if (chdir(args[1]) != 0) {
+    if (chdir(includes_home ? arg_with_home_path : args[1]) != 0) {
       perror("sshell: cd");
     }
-    // if (chdir(includes_home ? arg_with_home_path : args[1]) != 0) {
-    //   perror("sshell: cd");
-    // }
-    // free(after_home);
   }
 }
 
