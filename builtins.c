@@ -50,7 +50,7 @@ void interpolate_home(char *str, char *result) {
 void cd(char **args) {
   bool includes_home = false;
   char arg_with_home_path[1024] = {0};
-  char *after_home;
+
   if (args[1][0] == '~') {
    includes_home = true; 
    interpolate_home(args[1] + 1, arg_with_home_path);
