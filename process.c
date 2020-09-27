@@ -35,9 +35,9 @@ void execute_program(char **args) {
 } 
 
 int spawn_pipe_proc(int in, int out, char **cmd) {
-    pid_t pid;
+    pid_t pid = fork();
 
-    if ((pid = fork()) == NEWLY_CREATED_CHILD) {
+    if (pid == NEWLY_CREATED_CHILD) {
         if (in != STDIN_FILENO) {
             dup2(in, 0);
             close(in);
@@ -56,26 +56,15 @@ int spawn_pipe_proc(int in, int out, char **cmd) {
 }
 
 void execute_pipes(char *pipes[][1024], int pipes_amount) {
-    int i;
-    pid_t pid;
-    int in, fd[2];
+    int in = STDIN_FILENO;
+	int fd[2];
 
-    /* The first process should get its input from stdin */
-    in = STDIN_FILENO;
-
-    for (i = 0; i < pipes_amount; i++) {
+    for (int i = 0; i < pipes_amount; i++) {
         pipe(fd);
         spawn_pipe_proc(in, fd[WRITE_FD], pipes[i]);
         close(fd[WRITE_FD]);
         in = fd[READ_FD];
     }
 
-    pid = fork();
-
-    if (pid == NEWLY_CREATED_CHILD) {
-        dup2(in, STDIN_FILENO);
-        execvp(pipes[i][0], pipes[i]);
-    } else if (pid > 0) {
-        wait_for_process_to_end(pid);
-    }
+	spawn_pipe_proc(in, STDOUT_FILENO, pipes[pipes_amount]);
 }
