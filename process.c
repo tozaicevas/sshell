@@ -48,9 +48,7 @@ int spawn_pipe_proc(int in, int out, char **cmd) {
         }
 
         return execvp(cmd[0], cmd);
-    } else {
-        wait_for_process_to_end(pid);
-    }
+    } 
 
   return pid;
 }
@@ -58,13 +56,19 @@ int spawn_pipe_proc(int in, int out, char **cmd) {
 void execute_pipes(char *pipes[][1024], int pipes_amount) {
     int in = STDIN_FILENO;
 	int fd[2];
+    int processes[1024] = {0};
 
     for (int i = 0; i < pipes_amount; i++) {
         pipe(fd);
-        spawn_pipe_proc(in, fd[WRITE_FD], pipes[i]);
+        processes[i] = spawn_pipe_proc(in, fd[WRITE_FD], pipes[i]);
         close(fd[WRITE_FD]);
         in = fd[READ_FD];
     }
 
-	spawn_pipe_proc(in, STDOUT_FILENO, pipes[pipes_amount]);
+    processes[pipes_amount] = spawn_pipe_proc(in, STDOUT_FILENO, pipes[pipes_amount]);
+
+    int processes_amount = pipes_amount + 1;
+    for (int i=0; i<processes_amount; i++) {
+        wait_for_process_to_end(processes[i]);
+    }
 }
