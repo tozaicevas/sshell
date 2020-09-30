@@ -11,11 +11,8 @@
 #define WRITE_FD 1
 
 void wait_for_process_to_end(pid_t pid) {
-    int status;
-    do {
-        waitpid(pid, &status, WUNTRACED);
-    } while (!WIFEXITED(status) && !WIFSIGNALED(status));
-};
+    wait(NULL);
+}
 
 void execute_program(char **args) {
     pid_t pid = fork();  
@@ -34,17 +31,22 @@ void execute_program(char **args) {
     } 
 } 
 
-int spawn_pipe_proc(int in, int out, char **cmd) {
+int spawn_pipe_proc(int in, int out, char **cmd, int pipe[][2], int proc_index) {
     pid_t pid = fork();
 
     if (pid == NEWLY_CREATED_CHILD) {
         if (in != STDIN_FILENO) {
             dup2(in, 0);
-            close(in);
+            printf("process: %s, closing read end: %d\n", cmd[0], in);
         }
         if (out != STDOUT_FILENO) {
             dup2(out, 1);
-            close(out);
+            printf("process: %s, closing write end: %d\n", cmd[0], out);
+        }
+
+        for (int i=0; i<=proc_index; i++) {
+            close(pipe[i][READ_FD]);
+            close(pipe[i][WRITE_FD]);
         }
 
         return execvp(cmd[0], cmd);
@@ -55,19 +57,26 @@ int spawn_pipe_proc(int in, int out, char **cmd) {
 
 void execute_pipes(char *pipes[][1024], int pipes_amount) {
     int in = STDIN_FILENO;
-	int fd[2];
+    int processes_amount = pipes_amount + 1;
+	int fd[pipes_amount][2];
     int processes[1024] = {0};
 
     for (int i = 0; i < pipes_amount; i++) {
-        pipe(fd);
-        processes[i] = spawn_pipe_proc(in, fd[WRITE_FD], pipes[i]);
-        close(fd[WRITE_FD]);
-        in = fd[READ_FD];
+        pipe(fd[i]);
+        processes[i] = spawn_pipe_proc(in, fd[i][WRITE_FD], pipes[i], fd, i);
+        in = fd[i][READ_FD];
     }
 
-    processes[pipes_amount] = spawn_pipe_proc(in, STDOUT_FILENO, pipes[pipes_amount]);
+    // printf("last process!\n");
+    processes[pipes_amount] = spawn_pipe_proc(in, STDOUT_FILENO, pipes[pipes_amount], fd, pipes_amount - 1);
 
-    int processes_amount = pipes_amount + 1;
+    for (int i=0; i<pipes_amount; i++) {
+        close(fd[i][WRITE_FD]);
+        close(fd[i][READ_FD]);
+    }
+
+    printf("waiting for all processes to end");
+
     for (int i=0; i<processes_amount; i++) {
         wait_for_process_to_end(processes[i]);
     }
