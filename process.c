@@ -37,11 +37,9 @@ int spawn_pipe_proc(int in, int out, char **cmd, int pipe[][2], int proc_index) 
     if (pid == NEWLY_CREATED_CHILD) {
         if (in != STDIN_FILENO) {
             dup2(in, 0);
-            printf("process: %s, closing read end: %d\n", cmd[0], in);
         }
         if (out != STDOUT_FILENO) {
             dup2(out, 1);
-            printf("process: %s, closing write end: %d\n", cmd[0], out);
         }
 
         for (int i=0; i<=proc_index; i++) {
@@ -67,15 +65,12 @@ void execute_pipes(char *pipes[][1024], int pipes_amount) {
         in = fd[i][READ_FD];
     }
 
-    // printf("last process!\n");
     processes[pipes_amount] = spawn_pipe_proc(in, STDOUT_FILENO, pipes[pipes_amount], fd, pipes_amount - 1);
 
     for (int i=0; i<pipes_amount; i++) {
         close(fd[i][WRITE_FD]);
         close(fd[i][READ_FD]);
     }
-
-    printf("waiting for all processes to end");
 
     for (int i=0; i<processes_amount; i++) {
         wait_for_process_to_end(processes[i]);
